@@ -9,6 +9,19 @@ class Card extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name',
+        'description',
+        'level',
+        'attack',
+        'defense',
+        'attribute_id',
+        'race_id',
+        'type_id',
+        'created_at',
+        'updated_at',
+    ];
+
     public function casts(): array
     {
         return [

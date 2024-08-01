@@ -18,8 +18,8 @@ return new class extends Migration
     {
         Schema::create('cards', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Attribute::class);
-            $table->foreignIdFor(Race::class);
+            $table->foreignIdFor(Attribute::class)->nullable();
+            $table->foreignIdFor(Race::class)->nullable();
             $table->foreignIdFor(Type::class);
 
             $table->string('name')->index();
