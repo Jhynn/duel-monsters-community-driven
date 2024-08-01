@@ -20,7 +20,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Attribute::class)->nullable();
             $table->foreignIdFor(Race::class)->nullable();
-            $table->foreignIdFor(Type::class);
+            $table->foreignIdFor(Type::class)->nullable();
 
             $table->string('name')->index();
             $table->text('description')->index();
