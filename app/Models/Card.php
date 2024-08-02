@@ -18,6 +18,7 @@ class Card extends Model
         'attribute_id',
         'race_id',
         'type_id',
+        'metadata',
         'created_at',
         'updated_at',
     ];
