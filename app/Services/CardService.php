@@ -2,6 +2,11 @@
 
 namespace App\Services;
 
+use App\Http\Filters\{
+    CardsByAttributeFilter,
+    CardsByRaceFilter,
+    CardsByTypesFilter
+};
 use App\Models\Card;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
@@ -25,6 +30,9 @@ class CardService extends AbstractService
 			])
 			->allowedFilters([
 				AllowedFilter::exact('id'),
+				AllowedFilter::custom('type', new CardsByTypesFilter()),
+				AllowedFilter::custom('attribute', new CardsByAttributeFilter()),
+				AllowedFilter::custom('race', new CardsByRaceFilter()),
 				'name',
 				'description',
 			])
