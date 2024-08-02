@@ -98,7 +98,7 @@ class CardsSeeder extends Seeder
                     'defense' => $card['def'] ?? null,
                     'attribute_id' => isset($card['attribute'])  ? $attributes[$card['attribute']] : null,
                     'race_id' => (in_array(strtolower($card['race']), array_keys($races))) ? $races[strtolower($card['race'])] : null,
-                    'type_id' => (! in_array(strtolower($card['race']), array_keys($races))) ? $types[$card['race'] . ' ' . $card['type']] : null,
+                    'type_id' => (! in_array(strtolower($card['race']), array_keys($races))) ? $types[$card['race'] . ' ' . $card['type']] : $types[$card['type']] ?? null,
                     'created_at' => $timestamp,
                     'updated_at' => $timestamp,
                 ]);
