@@ -2,6 +2,7 @@
 
 use App\Models\{
     Attribute,
+    Card,
     Race,
     Type
 };
@@ -20,7 +21,6 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Attribute::class)->nullable();
             $table->foreignIdFor(Race::class)->nullable();
-            $table->foreignIdFor(Type::class)->nullable();
 
             $table->string('name')->index();
             $table->text('description')->index();
@@ -35,6 +35,11 @@ return new class extends Migration
 
             $table->json('metadata')->nullable();
             $table->timestamps();
+        });
+
+        Schema::create('card_type', function (Blueprint $table) {
+            $table->foreignIdFor(Card::class);
+            $table->foreignIdFor(Type::class);
         });
     }
 
