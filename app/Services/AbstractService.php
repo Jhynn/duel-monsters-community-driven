@@ -6,6 +6,7 @@ use App\Contracts\ServiceInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AbstractService implements ServiceInterface
 {
@@ -34,7 +35,9 @@ class AbstractService implements ServiceInterface
 	 */
 	public function store(array $properties): Model|null
     {
-        $tmp = $this->model->create($properties);
+        $tmp = DB::transaction(function() use ($properties) {
+            return $this->model->create($properties);
+        });
 
         return $tmp;
     }
@@ -58,8 +61,12 @@ class AbstractService implements ServiceInterface
 	 */
 	public function update(array $properties, int|Model $resource): Model|null
     {
-        $tmp = $this->show($resource);
-        $tmp->update($properties);
+        $tmp = DB::transaction(function() use ($properties, $resource) {
+            $tmp = $this->show($resource);
+            $tmp->update($properties);
+
+            return $tmp;
+        });
 
         return $tmp;
     }
@@ -69,9 +76,13 @@ class AbstractService implements ServiceInterface
 	 */
 	public function destroy(int|Model $resource, array $aux=null): Model|null
     {
-        $tmp = $this->show($resource);
-        $tmp->delete();
+        $resource = DB::transaction(function() use ($aux, $resource) {
+            $tmp = $this->show($resource);
+            $tmp->delete();
 
-        return $tmp;
+            return $tmp;
+        });
+
+        return $resource;
     }
 }

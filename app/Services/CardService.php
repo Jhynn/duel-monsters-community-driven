@@ -11,6 +11,7 @@ use App\Models\Card;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\{
 	AllowedFilter,
 	QueryBuilder
@@ -77,28 +78,36 @@ class CardService extends AbstractService
 
 	public function store(array $properties): Card|null
 	{
-		if ($properties['metadata']['fusion-material-monsters']) {
-			$properties['metadata']['fusion-material-monsters'] = $this->fusionMaterialMonstersValidation(
-				$properties['metadata']['fusion-material-monsters']
-			);
-		}
+		$card = DB::transaction(function() use ($properties) {
+			if ($properties['metadata']['fusion-material-monsters']) {
+				$properties['metadata']['fusion-material-monsters'] = $this->fusionMaterialMonstersValidation(
+					$properties['metadata']['fusion-material-monsters']
+				);
+			}
+	
+			$card = Card::create($properties);
+			$card->types()->attach($properties['types']);
 
-		$card = Card::create($properties);
-		$card->types()->attach($properties['types']);
+			return $card;
+		});
 
 		return $card;
 	}
 
 	public function update(array $properties, int|Model $resource): Card|null
 	{
-		if ($properties['metadata']['fusion-material-monsters']) {
-			$properties['metadata']['fusion-material-monsters'] = $this->fusionMaterialMonstersValidation(
-				$properties['metadata']['fusion-material-monsters']
-			);
-		}
+		$resource = DB::transaction(function() use ($properties, $resource) {
+			if ($properties['metadata']['fusion-material-monsters']) {
+				$properties['metadata']['fusion-material-monsters'] = $this->fusionMaterialMonstersValidation(
+					$properties['metadata']['fusion-material-monsters']
+				);
+			}
+			
+			$resource->update($properties);
+			$resource->types()->sync($properties['types']);
 
-		$resource->update($properties);
-		$resource->types()->sync($properties['types']);
+			return $resource;
+		});
 
 		return $resource;
 	}

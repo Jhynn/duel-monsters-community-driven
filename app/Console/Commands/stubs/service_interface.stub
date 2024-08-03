@@ -23,15 +23,6 @@ interface ServiceInterface
 	public function store(array $properties);
 
 	/**
-     * Updates the specified resource with $properties in the DB.
-     * 
-	 * @param array $properties 
-	 * @param int $id 
-	 * @return mixed 
-	 */
-	public function update(array $properties, int $id);
-
-	/**
      * Retrieves the specified resource from the DB.
      * 
 	 * @param int $id 
@@ -39,6 +30,15 @@ interface ServiceInterface
 	 * @return mixed 
 	 */
 	public function show(int $id, array $relations);
+
+	/**
+     * Updates the specified resource with $properties in the DB.
+     * 
+	 * @param array $properties 
+	 * @param int $id 
+	 * @return mixed 
+	 */
+	public function update(array $properties, int $id);
 
 	/**
      * Deletes the specified resource from the DB.

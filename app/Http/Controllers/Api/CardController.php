@@ -39,13 +39,7 @@ class CardController extends Controller
     public function store(StoreCardRequest $request)
     {
         try {
-            $data = $request->validated();
-
-            $payload = DB::transaction(function () use ($data) {
-                return $this->service->store($data);
-            });
-
-            return CardResource::make($payload)
+            return CardResource::make($this->service->store($request->validated()))
                 ->additional([
                     'message' => 'card succesfully created',
                 ]);
@@ -72,13 +66,7 @@ class CardController extends Controller
     public function update(UpdateCardRequest $request, Card $card)
     {
         try {
-            $data = $request->validated();
-
-            $payload = DB::transaction(function () use ($data, $card) {
-                return $this->service->update($data, $card);
-            });
-
-            return CardResource::make($payload)
+            return CardResource::make($this->service->update($request->validated(), $card))
                 ->additional([
                     'message' => 'card succesfully updated',
                 ]);
@@ -93,11 +81,7 @@ class CardController extends Controller
     public function destroy(DestroyCardRequest $request, $card)
     {
         try {
-            $payload = DB::transaction(function () use ($card) {
-                return $this->service->destroy($card);
-            });
-
-            return CardResource::make($payload)
+            return CardResource::make($this->service->destroy($card))
                 ->additional([
                     'message' => 'card succesfully deleted',
                 ]);
