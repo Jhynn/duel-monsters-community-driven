@@ -11,7 +11,7 @@ class UpdateCardRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,19 @@ class UpdateCardRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'sometimes|nullable|string',
+            'description' => 'sometimes|nullable|string',
+            'max_quantity' => 'sometimes|nullable|integer|min:1|max:3',
+            'tributable' => 'sometimes|nullable|boolean',
+            'immune' => 'sometimes|nullable|boolean',
+            'metadata' => 'sometimes|nullable|array',
+            'level' => 'sometimes|nullable|integer|min:1',
+            'attack' => 'sometimes|nullable|integer|min:0',
+            'defense' => 'sometimes|nullable|integer|min:0',
+            'race_id' => 'sometimes|nullable|integer',
+            'attribute_id' => 'sometimes|nullable|integer',
+            'types' => 'sometimes|nullable|array',
+            'types.*' => 'integer',
         ];
     }
 }

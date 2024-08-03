@@ -35,9 +35,10 @@ interface ServiceInterface
      * Retrieves the specified resource from the DB.
      * 
 	 * @param int $id 
+	 * @param array $relations
 	 * @return mixed 
 	 */
-	public function show(int $id);
+	public function show(int $id, array $relations);
 
 	/**
      * Deletes the specified resource from the DB.

@@ -17,6 +17,9 @@ class Card extends Model
     protected $fillable = [
         'name',
         'description',
+        'max_quantity',
+        'tributable',
+        'immune',
         'level',
         'attack',
         'defense',

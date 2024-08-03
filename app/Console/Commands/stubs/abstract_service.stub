@@ -42,12 +42,12 @@ class AbstractService implements ServiceInterface
     /**
 	 * @inheritDoc
 	 */
-	public function show(int|Model $resource): Model|null
+	public function show(int|Model $resource, array $relations=null): Model|null
     {
         if (gettype($resource) == 'integer')
-            return $this->model->findOrFail($resource);
+            return $this->model->findOrFail($resource)->loadMissing($relations);
 
-        return $resource;
+        return $resource->loadMissing($relations);
     }
 
 	/**
