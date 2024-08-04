@@ -4,6 +4,8 @@ namespace App\Jobs;
 
 use App\Models\Card;
 use App\Models\Type;
+use App\Services\CardService;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 
@@ -22,27 +24,29 @@ class FusionMaterialMonsters implements ShouldQueue
     public function handle(): void
     {
         $fusionMonsters = $this->cards
-            ->where('type_id', Type::where('name', 'Fusion Monster')->first()->id)
+            ->whereHas('types', function(Builder $query) {
+                $query->where('name', 'Fusion Monster');
+            })
             ->get();
 
         foreach ($fusionMonsters as $fusionMonster) {
-            $fusionMaterials = strstr($fusionMonster->description, "\n", true);
+            $names = strstr($fusionMonster->description, "\n", true);
 
-            if (empty($fusionMaterials))
-                $fusionMaterials = $fusionMonster->description;
+            if (empty($names)) $names = $fusionMonster->description;
 
-            $fusionMaterials = explode('+', $fusionMaterials);
+            $fusionMaterials = explode('+', preg_replace('/"/i', '', $names));
+            $tmp = [];
 
-            $names = array_map(function ($item) {
-                return trim(preg_replace('/"(.*)"/i', '$1', $item));
-            }, $fusionMaterials);
+            foreach ($fusionMaterials as $fusionMaterial) {
+                $tmp[] = Card::where('name', trim($fusionMaterial))->first()->id;
+            }
 
-            $fusionMaterials = [];
+            $fusionMaterials = CardService::fusionMaterialMonstersValidation(
+                $tmp
+            );
 
-            foreach($names as $name)
-                $fusionMaterials[] = Card::select(['id', 'name'])->where('name', $name)->first();
-
-            $fusionMonster['metadata']['fusion-materials-monsters'] = $fusionMaterials;
+            // "Indirect modification of overloaded element of App\\Models\\Card has no effect"
+            $fusionMonster['metadata']['fusion-material-monsters'] = $fusionMaterials;
             $fusionMonster->save();
         }
     }

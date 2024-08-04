@@ -28,7 +28,7 @@ class CardService extends AbstractService
 	 * @throws \Exception
 	 * @return array
 	 */
-	private function fusionMaterialMonstersValidation(array $fusionMaterials): array
+	public static function fusionMaterialMonstersValidation(array $fusionMaterials): array
 	{
 		$fusionMaterials = array_map(function($item) {
 			$card = Card::where('id', $item)->first();
@@ -80,7 +80,7 @@ class CardService extends AbstractService
 	{
 		$card = DB::transaction(function() use ($properties) {
 			if ($properties['metadata']['fusion-material-monsters']) {
-				$properties['metadata']['fusion-material-monsters'] = $this->fusionMaterialMonstersValidation(
+				$properties['metadata']['fusion-material-monsters'] = self::fusionMaterialMonstersValidation(
 					$properties['metadata']['fusion-material-monsters']
 				);
 			}
