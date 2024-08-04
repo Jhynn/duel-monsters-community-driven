@@ -13,7 +13,6 @@ use App\Models\Card;
 use App\Services\CardService;
 use App\Traits\ApiCommonResponses;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class CardController extends Controller
 {

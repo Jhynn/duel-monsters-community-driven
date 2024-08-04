@@ -106,7 +106,7 @@ class CardsSeeder extends Seeder
                 for ($i = 0; $i < count($card['card_images']); $i++) {
                     Media::create([
                         'mediable_id' => $newCard->id,
-                        'mediable_type' => Card::class,
+                        'mediable_type' => app(Card::class)->getMorphClass(),
                         'url' => $card['card_images'][$i]['image_url_cropped'],
                         'created_at' => $timestamp,
                         'updated_at' => $timestamp,
