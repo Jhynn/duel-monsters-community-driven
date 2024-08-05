@@ -29,6 +29,12 @@ class AttributesSeeder extends Seeder
         [
             'name' => 'divine',
         ],
+        [
+            'name' => 'trap',
+        ],
+        [
+            'name' => 'spell',
+        ],
     ];
 
     /**

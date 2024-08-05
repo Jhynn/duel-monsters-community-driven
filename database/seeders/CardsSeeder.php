@@ -28,6 +28,8 @@ class CardsSeeder extends Seeder
             'FIRE' => Attribute::where('name', 'fire')->first()->id,
             'WATER' => Attribute::where('name', 'water')->first()->id,
             'DIVINE' => Attribute::where('name', 'divine')->first()->id,
+            'Trap Card' => Attribute::where('name', 'trap')->first()->id,
+            'Spell Card' => Attribute::where('name', 'spell')->first()->id,
         ];
     
         $races = [
@@ -92,7 +94,7 @@ class CardsSeeder extends Seeder
                     'level' => $card['level'] ?? null,
                     'attack' => $card['atk'] ?? null,
                     'defense' => $card['def'] ?? null,
-                    'attribute_id' => isset($card['attribute']) ? $attributes[$card['attribute']] : null,
+                    'attribute_id' => isset($card['attribute']) ? $attributes[$card['attribute']] : $attributes[$card['type']],
                     'race_id' => (in_array(strtolower($card['race']), array_keys($races))) ? $races[strtolower($card['race'])] : null,
                     'created_at' => $timestamp,
                     'updated_at' => $timestamp,
