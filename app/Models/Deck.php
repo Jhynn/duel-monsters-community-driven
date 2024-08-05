@@ -4,7 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\{
+    BelongsTo,
+    MorphMany
+};
 
 class Deck extends Model
 {
@@ -23,5 +26,10 @@ class Deck extends Model
     public function medias(): MorphMany
     {
         return $this->morphMany(Media::class, 'mediable');
+    }
+
+    public function style(): BelongsTo
+    {
+        return $this->belongsTo(Style::class);
     }
 }
