@@ -10,6 +10,13 @@ class Deck extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name',
+        'description',
+        'deck_artwork_id',
+        'card_sleeve_id',
+    ];
+
     /**
      * Get all of the decks's medias.
      */
