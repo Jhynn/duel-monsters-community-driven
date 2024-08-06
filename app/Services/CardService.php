@@ -3,11 +3,15 @@
 namespace App\Services;
 
 use App\Http\Filters\{
-    CardsByAttributeFilter,
-    CardsByRaceFilter,
-    CardsByTypesFilter
+	CardsByAttributeFilter,
+	CardsByRaceFilter,
+	CardsByTypesFilter
 };
-use App\Models\Card;
+use App\Models\{
+	Attribute,
+	Card
+};
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -28,25 +32,27 @@ class CardService extends AbstractService
 	 * @throws \Exception
 	 * @return array
 	 */
-	public static function fusionMaterialMonstersValidation(array $fusionMaterials): array
+	public static function fusionMaterialMonstersValidation(array &$fusionMaterials): array
 	{
-		$fusionMaterials = array_map(function($item) {
-			$card = Card::where('id', $item)->first();
+		$fusionMaterials = Card::whereIn('id', $fusionMaterials)
+			->get()
+			->map(function ($card) {
+				$nonMonsters = Attribute::whereIn('name', ['trap', 'spell'])
+					->get('id')
+					->pluck('id')
+					->toArray();
 
-			if (empty($card['attribute_id'])) throw new \Exception('please, type only monsters', 400);
+				if (in_array($card->attribute_id, $nonMonsters))
+					throw new \Exception('please, type only monsters', 400);
 
-			return [$card->name => $card->id];
-		}, $fusionMaterials);
+				return $card;
+			})
+			->pluck('id', 'name');
 
-		$fusionMaterials = call_user_func_array(
-			'array_merge', 
-			$fusionMaterials
-		);
-
-		if (count($fusionMaterials) < 2)
+		if ($fusionMaterials->count() < 2)
 			throw new \Exception('please, type at least 2 cards', 400);
 
-		return $fusionMaterials;
+		return $fusionMaterials->toArray();
 	}
 
 	public function index(Request $properties): LengthAwarePaginator
@@ -78,13 +84,13 @@ class CardService extends AbstractService
 
 	public function store(array $properties): Card|null
 	{
-		$card = DB::transaction(function() use ($properties) {
+		$card = DB::transaction(function () use ($properties) {
 			if ($properties['metadata']['fusion-material-monsters']) {
 				$properties['metadata']['fusion-material-monsters'] = self::fusionMaterialMonstersValidation(
 					$properties['metadata']['fusion-material-monsters']
 				);
 			}
-	
+
 			$card = Card::create($properties);
 			$card->types()->attach($properties['types']);
 
@@ -96,13 +102,13 @@ class CardService extends AbstractService
 
 	public function update(array $properties, int|Model $resource): Card|null
 	{
-		$resource = DB::transaction(function() use ($properties, $resource) {
+		$resource = DB::transaction(function () use ($properties, $resource) {
 			if ($properties['metadata']['fusion-material-monsters']) {
 				$properties['metadata']['fusion-material-monsters'] = $this->fusionMaterialMonstersValidation(
 					$properties['metadata']['fusion-material-monsters']
 				);
 			}
-			
+
 			$resource->update($properties);
 			$resource->types()->sync($properties['types']);
 
@@ -110,5 +116,30 @@ class CardService extends AbstractService
 		});
 
 		return $resource;
+	}
+
+	public static function fusionMaterialMonsters(): void
+	{
+		Card::whereHas('types', function (Builder $query) {
+			$query->where('name', 'Fusion Monster');
+		})
+			->get()
+			->map(function (Card $fusionMonster) {
+				$names = strstr($fusionMonster->description, "\n", true);
+
+				if (empty($names)) $names = $fusionMonster->description;
+
+				$fusionMaterials = explode('+', preg_replace('/"/i', '', $names));
+				$tmp = [];
+
+				foreach ($fusionMaterials as $fusionMaterial)
+					$tmp[] = Card::where('name', trim($fusionMaterial))->first()->id;
+
+				$fusionMaterials = CardService::fusionMaterialMonstersValidation($tmp);
+
+				// "Indirect modification of overloaded property App\\Models\\Card::$metadata has no effect".
+				$fusionMonster->metadata['fusion-material-monsters'] = $fusionMaterials;
+				$fusionMonster->save();
+			});
 	}
 }

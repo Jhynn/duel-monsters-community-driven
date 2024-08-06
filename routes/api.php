@@ -2,12 +2,13 @@
 
 use App\Http\Controllers\Api\CardController;
 use App\Http\Controllers\Api\MediaController;
+use App\Services\CardService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/debug', function (Request $request) {
     return response()->json([
-        'message' => 'debug',
+        'message' => CardService::fusionMaterialMonsters(),
     ]);
 });
 
