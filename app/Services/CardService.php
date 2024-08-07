@@ -37,22 +37,28 @@ class CardService extends AbstractService
 	 */
 	public static function fusionMaterialMonstersValidation(array &$fusionMaterials): array
 	{
-		$fusionMaterials = Card::whereIn('id', $fusionMaterials)
+		$fusionMaterials = Card::whereIn('id', array_keys($fusionMaterials))
 			->get()
-			->map(function ($card) {
+			->map(function ($card) use ($fusionMaterials) {
 				$nonMonsters = Attribute::whereIn('name', ['trap', 'spell'])
 					->get('id')
 					->pluck('id')
 					->toArray();
 
-				if (in_array($card->attribute_id, $nonMonsters))
-					throw new \Exception('please, type only monsters', 400);
+				if (in_array($card->attribute_id, $nonMonsters)) throw new \Exception('please, type only monsters', 400);
 
-				return $card;
+				return [
+					'id' => $card->id,
+					'name' => $card->name,
+					'quantity' => $fusionMaterials[$card->id],
+				];
 			});
 
-		if ($fusionMaterials->count() < 2)
-			throw new \Exception('please, type at least 2 cards', 400);
+		$qty = $fusionMaterials->reduce(function($acc, $item) {
+			return $acc + $item['quantity'];
+		}, 0);
+
+		if ($qty < 2) throw new \Exception('please, type at least 2 cards', 400);
 
 		return $fusionMaterials->toArray();
 	}
@@ -143,6 +149,8 @@ class CardService extends AbstractService
 				foreach ($fusionMaterials as $fusionMaterial)
 					$tmp[] = Card::where('name', trim($fusionMaterial))->first()->id;
 
+				$tmp = self::itemQuantity($tmp);
+
 				$fusionMaterials = CardService::fusionMaterialMonstersValidation($tmp);
 
 				$fusionMonster->update([
@@ -151,5 +159,16 @@ class CardService extends AbstractService
 					],
 				]);
 			});
+	}
+
+	private static function itemQuantity(array $items): array
+	{
+		$tmp = [];
+
+		foreach ($items as $item) {
+			$tmp[$item] = isset($tmp[$item]) ? ++$tmp[$item] : 1;
+		}
+
+		return $tmp;
 	}
 }
