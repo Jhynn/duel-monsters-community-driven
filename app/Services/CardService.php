@@ -49,8 +49,7 @@ class CardService extends AbstractService
 					throw new \Exception('please, type only monsters', 400);
 
 				return $card;
-			})
-			->pluck('id', 'name');
+			});
 
 		if ($fusionMaterials->count() < 2)
 			throw new \Exception('please, type at least 2 cards', 400);
@@ -146,9 +145,11 @@ class CardService extends AbstractService
 
 				$fusionMaterials = CardService::fusionMaterialMonstersValidation($tmp);
 
-				// "Indirect modification of overloaded property App\\Models\\Card::$metadata has no effect".
-				$fusionMonster->metadata['fusion-material-monsters'] = $fusionMaterials;
-				$fusionMonster->save();
+				$fusionMonster->update([
+					'metadata' => [
+						'fusion-material-monsters' => $fusionMaterials,
+					],
+				]);
 			});
 	}
 }
