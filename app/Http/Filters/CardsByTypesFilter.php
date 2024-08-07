@@ -11,7 +11,15 @@ class CardsByTypesFilter implements Filter
     public function __invoke(Builder $query, mixed $value, string $property)
     {
         $query->whereHas('types', function(EloquentBuilder $query) use ($value) {
-            $query->where('name', 'like', "%{$value}%");
+            if ((gettype($value) == 'array')) {
+                $query->where('name', 'like', "%{$value[0]}%");
+                
+                foreach (array_slice($value, 1) as $type) {
+                    $type = trim($type);
+                    $query->orWhere('name', 'like', "%{$type}%");
+                }
+            } else
+                $query->where('name', 'like', "%{$value}%");
         });
     }
 }

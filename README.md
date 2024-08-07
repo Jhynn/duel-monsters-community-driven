@@ -22,7 +22,7 @@ git clone https://github.com/Jhynn/duel-monsters-community-driven.git
 
 2. Install dependencies:
 ```bash
-cd yu-gi-oh-goat-laravel
+cd duel-monsters-community-driven
 composer install
 ```
 

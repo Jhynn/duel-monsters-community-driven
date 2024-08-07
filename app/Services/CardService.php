@@ -3,8 +3,11 @@
 namespace App\Services;
 
 use App\Http\Filters\{
-	CardsByAttributeFilter,
-	CardsByRaceFilter,
+    CardsByAttackFilter,
+    CardsByAttributeFilter,
+    CardsByDefenseFilter,
+    CardsByLevelFilter,
+    CardsByRaceFilter,
 	CardsByTypesFilter
 };
 use App\Models\{
@@ -69,11 +72,17 @@ class CardService extends AbstractService
 				AllowedFilter::custom('type', new CardsByTypesFilter()),
 				AllowedFilter::custom('attribute', new CardsByAttributeFilter()),
 				AllowedFilter::custom('race', new CardsByRaceFilter()),
+				AllowedFilter::custom('attack', new CardsByAttackFilter()),
+				AllowedFilter::custom('defense', new CardsByDefenseFilter()),
+				AllowedFilter::custom('level', new CardsByLevelFilter()),
 				'name',
 				'description',
 			])
 			->allowedSorts([
 				'name',
+				'attack',
+				'defense',
+				'level',
 				'created_at'
 			])
 			->paginate()
