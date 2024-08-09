@@ -27,9 +27,7 @@ trait ApiCommonResponses
     {
         $statusCode = 500;
 
-        if (method_exists($e, 'getStatusCode')) {
-            $statusCode = $e->getStatusCode();
-        }
+        if (method_exists($e, 'getCode')) $statusCode = $e->getCode();
 
         report($e);
 
