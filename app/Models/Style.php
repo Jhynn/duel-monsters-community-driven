@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\{
 
 class Style extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'name',
         'description',
@@ -18,7 +20,12 @@ class Style extends Model
         'user_id',
     ];
 
-    use HasFactory;
+    public $types = [
+        'playmate',
+        'avatar',
+        'deck',
+        'card',
+    ];
 
     public function author(): BelongsTo
     {

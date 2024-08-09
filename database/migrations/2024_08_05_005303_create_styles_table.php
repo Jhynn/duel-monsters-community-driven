@@ -20,6 +20,7 @@ return new class extends Migration
             $table->foreignIdFor(User::class);
             $table->string('name')->unique()->index();
             $table->text('code');
+            $table->enum('type', ['deck', 'card', 'playmate', 'avatar']);
             $table->text('description')->nullable();
             $table->timestamps();
         });
