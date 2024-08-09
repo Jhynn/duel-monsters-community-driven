@@ -21,7 +21,7 @@ return new class extends Migration
             $table->foreignIdFor(Style::class, 'deck_artwork_id')->default(1);
             $table->foreignIdFor(Style::class, 'card_sleeve_id')->default(2);
             $table->string('name')->index();
-            $table->text('description')->index();
+            $table->text('description')->index()->nullable();
 
             $table->unsignedInteger('main-deck-quantity')->default(0);
             $table->unsignedInteger('fusion-deck-quantity')->default(0);
@@ -30,11 +30,9 @@ return new class extends Migration
         });
 
         Schema::create('card_deck', function (Blueprint $table) {
-            $table->id();
             $table->foreignIdFor(Card::class);
             $table->foreignIdFor(Deck::class);
             $table->enum('deck', ['main', 'fusion', 'additional']);
-            $table->timestamps();
         });
     }
 

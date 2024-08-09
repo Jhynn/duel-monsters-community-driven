@@ -65,4 +65,9 @@ class Card extends Model
     {
         return $this->belongsTo(Style::class);
     }
+
+    public function decks(): BelongsToMany
+    {
+        return $this->belongsToMany(Deck::class);
+    }
 }

@@ -20,6 +20,9 @@ class CardResource extends JsonResource
             'race' => RaceResource::make($this->whenLoaded('race')),
             'types' => TypeResource::collection($this->whenLoaded('types')),
             'medias' => MediaResource::collection($this->whenLoaded('medias')),
+            'deck' => $this->whenPivotLoaded('card_deck', function () {
+                return $this->pivot->deck;
+            }),
             'name' => $this->name,
             'description' => $this->description,
             'max_quantity' => $this->max_quantity,

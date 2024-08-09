@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\{
     BelongsTo,
+    BelongsToMany,
     MorphMany
 };
 
@@ -31,5 +32,13 @@ class Deck extends Model
     public function style(): BelongsTo
     {
         return $this->belongsTo(Style::class);
+    }
+
+    public function cards(): BelongsToMany
+    {
+        return $this->belongsToMany(Card::class)
+            ->withPivot([
+                'deck',
+            ]);
     }
 }
