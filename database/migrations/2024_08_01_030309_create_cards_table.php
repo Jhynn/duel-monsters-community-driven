@@ -22,7 +22,7 @@ return new class extends Migration
             $table->foreignIdFor(Attribute::class)->nullable();
             $table->foreignIdFor(Race::class)->nullable();
 
-            $table->string('name')->index();
+            $table->string('name')->unique()->index();
             $table->text('description')->index();
             $table->integer('max_quantity')->default(3);
             $table->integer('level')->nullable();
@@ -49,5 +49,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('cards');
+        Schema::dropIfExists('card_type');
     }
 };

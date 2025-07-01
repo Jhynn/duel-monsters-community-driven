@@ -1,6 +1,6 @@
 # Duel Monsters Community-Driven
 
-<p align="center"><a href="#" target="_blank"><img src="https://i.pinimg.com/736x/ea/32/b3/ea32b3ea9cc92b2761e3f564292a4504.jpg" width="400" alt="Laravel Logo"></a></p>
+<p align="center"><a href="#" target="_blank"><img src="https://i.pinimg.com/736x/af/cb/ba/afcbbaef9173a304de0bd86cda87ad51.jpg" width="400" alt="Laravel Logo"></a></p>
 
 ## Introduction
 This project aims to create the back-end for a web-based simulator for the Yu-Gi-Oh! _Goat format_ using the Laravel PHP framework. 

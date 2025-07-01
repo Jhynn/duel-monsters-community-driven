@@ -45,7 +45,8 @@ class CardService extends AbstractService
 					->pluck('id')
 					->toArray();
 
-				if (in_array($card->attribute_id, $nonMonsters)) throw new \Exception('please, type only monsters', 400);
+				if (in_array($card->attribute_id, $nonMonsters))
+					throw new \Exception('please, type only monsters', 400);
 
 				return [
 					'id' => $card->id,
